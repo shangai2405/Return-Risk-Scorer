@@ -71,26 +71,26 @@ Unlike standard machine learning projects that optimize for abstract F1-scores o
 
 ---
 
-## 🎬 Official Judge Demo Walkthrough Script (8 Steps)
+## 🎬 Official Judge Demo Walkthrough Script
 
 Follow this 8-step demo flow when presenting to judges:
 
-1. **Show Executive Dashboard**: Point to accuracy metrics and leading naive baseline savings.
-   - *Script:* "We didn't optimize for F1-score; we optimized for total business cost — our cost-optimal model saves **₹9.54 Lakhs** compared to unguided operations (Flag Nothing) and **₹63.2 Lakhs** compared to over-flagging (Flag Everything) on 19.8k orders."
-2. **Open Audit Review Queue & Select an Order**: Click a flagged high-risk order to display the `DecisionCard` and SHAP factor attribution breakdown.
+1. **Show Executive Dashboard**: Point to accuracy metrics and the financial cost curve.
+   - *Script:* "We didn't optimize for F1-score; we optimized for total business cost. Compared to a 'flag nothing' policy, our model saves ₹9.54 lakhs. Compared to 'flag everything,' it saves ₹63.2 lakhs."
+2. **Open Audit Review Queue & Select an Order**: Click a flagged high-risk order to display the DecisionCard and SHAP factor attribution breakdown.
    - *Script:* "Every decision generates an audit-ready SHAP factor explanation showing why risk was flagged."
-3. **Submit Analyst Review Decision**: Click **`Confirm Risk`** or **`Overturn (Safe)`** directly on a table row.
-   - *Script:* "Real risk teams use human review loops — we track analyst agreement to monitor operational trust in real time."
-4. **Drag Live Threshold Slider**: Adjust the slider on the Threshold Optimizer tab.
+3. **Live Interactive Threshold Slider**: Drag the threshold slider on the Threshold Optimizer tab.
    - *Script:* "This slider gives risk operations managers a financial steering wheel to balance manual review budgets against dispute costs in real time."
-5. **Show Cost Sensitivity Chart**: Point to the FP:FN ratio sweep chart below the threshold curve.
-   - *Script:* "If our ₹500/₹1,500 estimate is off by 2–3x, here is exactly how our threshold moves — we tested our own assumptions instead of assuming they're right."
-6. **Show Production Data Drift Monitor**: Expand the Data Drift Monitor panel on the Dashboard.
-   - *Script:* "Our model was trained on historical data; here is the live KS Test ($p < 0.05$) and PSI ($\text{PSI} > 0.2$) monitor showing how we catch feature drift before precision silently degrades in production."
-7. **Show Agreement Monitor**: Point to the Analyst Agreement panel on the Dashboard.
-   - *Script:* "And here is how we know if human analysts stop trusting the model — a declining agreement rate is often an earlier warning sign than data drift itself."
+4. **Show the Cost Sensitivity Chart**: Point to the FP:FN ratio sweep.
+   - *Script:* "If our ₹500/₹1500 cost estimate is off by 2-3x, here's exactly how our threshold would move — we tested our own assumptions instead of assuming they're right."
+5. **Show the Drift Panel**: Expand the Data Drift Monitor panel on the Dashboard.
+   - *Script:* "Our model was trained on historical data — here's the live KS test and PSI monitor showing how we'd catch feature drift before precision silently degrades."
+6. **Show the Agreement Panel**: Point to the current agreement rate and trend.
+   - *Script:* "And here's how we'd know if human analysts stopped trusting the model's flags — a declining agreement rate is often an earlier warning sign than data drift itself."
+7. **Do a live review**: Click "Confirm Risk" or "Overturn — Safe" on a flagged order in the Review Queue, and show the Agreement Panel update.
+   - *Script:* "This isn't just a static model — it's a system that tracks whether it's still trusted."
 8. **Close with Audit Documentation**: Reference `docs/labeling_methodology.md`, `docs/cost_assumptions.md`, `docs/drift_monitoring.md`, and `docs/agreement_tracking.md`.
-   - *Script:* "All thresholding, cost formulas, sensitivity sweeps, and statistical tests are fully documented and auditable — 100% transparent and defensible."
+   - *Script:* "Every threshold, cost formula, and statistical test is documented and auditable — 100% transparent and defensible."
 
 ---
 
