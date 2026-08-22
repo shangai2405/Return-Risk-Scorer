@@ -1,10 +1,10 @@
-# 🛡️ Return-Risk Scorer — Enterprise Risk Engine (Indian BFSI & E-Commerce)
+#  Return-Risk Scorer — Enterprise Risk Engine (Indian BFSI & E-Commerce)
 
 > **Audit-Ready Explainable Return-Risk Scoring Engine with Cost-Based Threshold Optimization, Statistical Drift Monitoring, and Analyst Agreement Tracking**
 
 ---
 
-## 🏛️ Indian BFSI & Fintech Alignment
+##  Indian BFSI & Fintech Alignment
 
 This system directly hits key risk challenges faced by **Indian BFSI, Payment Gateways (Razorpay, Paytm, Cashfree, PhonePe), and E-Commerce Platforms**:
 
@@ -14,7 +14,7 @@ This system directly hits key risk challenges faced by **Indian BFSI, Payment Ga
 
 ---
 
-## 📈 Empirical Percentile-Based Labeling Methodology
+##  Empirical Percentile-Based Labeling Methodology
 
 Rather than assuming hardcoded guesses (such as a fixed 7 days or 3 complaints), our labeling pipeline computes empirical distributions directly from the dataset before applying the target rule, saving the exact configuration to `ml/artifacts/labeling_thresholds.json`:
 
@@ -36,7 +36,7 @@ Rather than assuming hardcoded guesses (such as a fixed 7 days or 3 complaints),
 
 ---
 
-## 🔬 Statistical Data Drift Monitoring (Pure Statistics — No LLM)
+##  Statistical Data Drift Monitoring (Pure Statistics — No LLM)
 
 Detects when production order feature distributions deviate from the training baseline before precision/recall silently degrade in the field:
 
@@ -48,7 +48,7 @@ Detects when production order feature distributions deviate from the training ba
 
 ---
 
-## 📊 Honest Metrics (Factoring False-Positive Costs)
+##  Honest Metrics (Factoring False-Positive Costs)
 
 Unlike standard machine learning projects that optimize for abstract F1-scores or Accuracy (ignoring operational expenses), this system delivers **honest financial metrics**:
 
@@ -63,7 +63,7 @@ Unlike standard machine learning projects that optimize for abstract F1-scores o
 
 ---
 
-## 🛡️ Strictly Defense-Only Architecture
+##  Strictly Defense-Only Architecture
 
 - **100% Defensive Risk Mitigation**: Operates purely as a risk assessment, fraud screening, and operational audit console (`"Auto-approve"` vs `"Hold for manual review"`).
 - **Zero Offensive Capabilities**: Contains **no offensive code, network probing, or automated counter-maneuvers**. Anything offense-capable is strictly excluded.
@@ -71,30 +71,7 @@ Unlike standard machine learning projects that optimize for abstract F1-scores o
 
 ---
 
-## 🎬 Official Judge Demo Walkthrough Script
-
-Follow this 8-step demo flow when presenting to judges:
-
-1. **Show Executive Dashboard**: Point to accuracy metrics and the financial cost curve.
-   - *Script:* "We didn't optimize for F1-score; we optimized for total business cost. Compared to a 'flag nothing' policy, our model saves ₹9.54 lakhs. Compared to 'flag everything,' it saves ₹63.2 lakhs."
-2. **Open Audit Review Queue & Select an Order**: Click a flagged high-risk order to display the DecisionCard and SHAP factor attribution breakdown.
-   - *Script:* "Every decision generates an audit-ready SHAP factor explanation showing why risk was flagged."
-3. **Live Interactive Threshold Slider**: Drag the threshold slider on the Threshold Optimizer tab.
-   - *Script:* "This slider gives risk operations managers a financial steering wheel to balance manual review budgets against dispute costs in real time."
-4. **Show the Cost Sensitivity Chart**: Point to the FP:FN ratio sweep.
-   - *Script:* "If our ₹500/₹1500 cost estimate is off by 2-3x, here's exactly how our threshold would move — we tested our own assumptions instead of assuming they're right."
-5. **Show the Drift Panel**: Expand the Data Drift Monitor panel on the Dashboard.
-   - *Script:* "Our model was trained on historical data — here's the live KS test and PSI monitor showing how we'd catch feature drift before precision silently degrades."
-6. **Show the Agreement Panel**: Point to the current agreement rate and trend.
-   - *Script:* "And here's how we'd know if human analysts stopped trusting the model's flags — a declining agreement rate is often an earlier warning sign than data drift itself."
-7. **Do a live review**: Click "Confirm Risk" or "Overturn — Safe" on a flagged order in the Review Queue, and show the Agreement Panel update.
-   - *Script:* "This isn't just a static model — it's a system that tracks whether it's still trusted."
-8. **Close with Audit Documentation**: Reference `docs/labeling_methodology.md`, `docs/cost_assumptions.md`, `docs/drift_monitoring.md`, and `docs/agreement_tracking.md`.
-   - *Script:* "Every threshold, cost formula, and statistical test is documented and auditable — 100% transparent and defensible."
-
----
-
-## 🚀 Quickstart Guide
+##  Quickstart Guide
 
 ### Prerequisites
 - Python 3.10+
