@@ -1,0 +1,57 @@
+{
+  "features": [
+    "order_value",
+    "freight_value",
+    "installments",
+    "delivery_delay_days",
+    "discount_flag",
+    "customer_order_count",
+    "prior_low_review_count",
+    "address_state_mismatch",
+    "payment_type_credit_card",
+    "payment_type_boleto",
+    "payment_type_voucher",
+    "payment_type_debit_card",
+    "cat_bed_bath_table",
+    "cat_health_beauty",
+    "cat_sports_leisure",
+    "cat_computers_accessories",
+    "cat_furniture_decor",
+    "cat_housewares",
+    "cat_watches_gifts",
+    "cat_telephony",
+    "cat_auto",
+    "cat_toys",
+    "cat_cool_stuff",
+    "cat_garden_tools",
+    "cat_perfumery",
+    "cat_baby",
+    "cat_electronics",
+    "cat_other"
+  ],
+  "categorical_encodings": {
+    "payment_types": [
+      "credit_card",
+      "boleto",
+      "voucher",
+      "debit_card"
+    ],
+    "top_categories": [
+      "bed_bath_table",
+      "health_beauty",
+      "sports_leisure",
+      "computers_accessories",
+      "furniture_decor",
+      "housewares",
+      "watches_gifts",
+      "telephony",
+      "auto",
+      "toys",
+      "cool_stuff",
+      "garden_tools",
+      "perfumery",
+      "baby",
+      "electronics"
+    ]
+  }
+}

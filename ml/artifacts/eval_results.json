@@ -1,0 +1,31 @@
+{
+  "cost_optimal": {
+    "threshold": 0.75,
+    "precision": 0.7640086206896551,
+    "recall": 0.30974224552206203,
+    "f1": 0.4407833385141436,
+    "roc_auc": 0.7111365001588625,
+    "confusion_matrix": {
+      "tp": 709,
+      "tn": 17381,
+      "fp": 219,
+      "fn": 1580
+    },
+    "total_cost": 2479500
+  },
+  "f1_optimal": {
+    "threshold": 0.66,
+    "precision": 0.6934579439252336,
+    "recall": 0.3241590214067278,
+    "f1": 0.44179815421256324,
+    "roc_auc": 0.7111365001588625,
+    "confusion_matrix": {
+      "tp": 742,
+      "tn": 17272,
+      "fp": 328,
+      "fn": 1547
+    },
+    "total_cost": 2484500
+  },
+  "cost_savings_vs_f1_optimal": 5000
+}
