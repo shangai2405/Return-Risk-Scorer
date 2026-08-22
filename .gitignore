@@ -1,17 +1,8 @@
-# OS
 .DS_Store
-
-# Python
 venv/
 __pycache__/
 *.pyc
-
-# Database (regenerate via seed script, don't commit binary)
 *.db
-
-# Node
 node_modules/
 frontend/dist/
-
-# Raw dataset (download separately per README instructions)
 ml/data/raw/*.csv
