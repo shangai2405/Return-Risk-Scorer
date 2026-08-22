@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.app.core.db import init_db, SessionLocal, ScoredOrderRecord
+from backend.app.core.seed_reviews import seed_analyst_reviews
 from backend.app.services.model_loader import model_loader
 from backend.app.services.scoring import score_order, build_feature_vector
 from backend.app.services.explain import explain_vector
@@ -59,6 +60,7 @@ async def lifespan(app: FastAPI):
     init_db()
     model_loader.load()
     seed_sample_orders()
+    seed_analyst_reviews()
     yield
     # Shutdown actions
 

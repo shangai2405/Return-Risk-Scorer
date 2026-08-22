@@ -1,6 +1,6 @@
 # 🛡️ Return-Risk Scorer — Enterprise Risk Engine (Indian BFSI & E-Commerce)
 
-> **Audit-Ready Explainable Return-Risk Scoring Engine with Cost-Based Threshold Optimization and Statistical Drift Monitoring**
+> **Audit-Ready Explainable Return-Risk Scoring Engine with Cost-Based Threshold Optimization, Statistical Drift Monitoring, and Analyst Agreement Tracking**
 
 ---
 
@@ -56,7 +56,7 @@ Unlike standard machine learning projects that optimize for abstract F1-scores o
 - **False-Negative Cost ($C_{\text{FN}} = ₹1,500$)**: Factors in the ₹1,500 penalty of missing a bad return order (reverse shipping + restock loss + dispute fees).
 - **Mathematical Loss Objective**:
   $$\tau^* = \arg\min_{\tau} \left( \text{FP}(\tau) \times 500 + \text{FN}(\tau) \times 1500 \right)$$
-- **Naive Baseline Comparisons**:
+- **Naive Baseline Policy Comparisons**:
   - **Flag Nothing Policy ($\tau = 1.0$) Cost**: ₹3,433,500 $\rightarrow$ **Cost-Optimal Model Saves ₹954,000 (~₹9.54 Lakhs)**.
   - **Flag Everything Policy ($\tau = 0.0$) Cost**: ₹8,800,000 $\rightarrow$ **Cost-Optimal Model Saves ₹6,320,500 (~₹63.2 Lakhs)**.
 - **Financial Proof**: Compares total ₹ loss at the **Cost-Optimal Threshold ($\tau = 0.75$)** versus standard F1-optimal threshold, showing exact rupee savings for finance teams.
@@ -71,20 +71,26 @@ Unlike standard machine learning projects that optimize for abstract F1-scores o
 
 ---
 
-## 🎬 Official Judge Demo Walkthrough Script
+## 🎬 Official Judge Demo Walkthrough Script (8 Steps)
 
-Follow this 5-step demo flow when presenting to judges:
+Follow this 8-step demo flow when presenting to judges:
 
-1. **Show Executive Dashboard**: Point to accuracy metrics and the financial cost curve.
-   - *Script:* "We didn't optimize for F1-score; we optimized for total business cost — here is the exact difference in ₹ saved."
+1. **Show Executive Dashboard**: Point to accuracy metrics and leading naive baseline savings.
+   - *Script:* "We didn't optimize for F1-score; we optimized for total business cost — our cost-optimal model saves **₹9.54 Lakhs** compared to unguided operations (Flag Nothing) and **₹63.2 Lakhs** compared to over-flagging (Flag Everything) on 19.8k orders."
 2. **Open Audit Review Queue & Select an Order**: Click a flagged high-risk order to display the `DecisionCard` and SHAP factor attribution breakdown.
    - *Script:* "Every decision generates an audit-ready SHAP factor explanation showing why risk was flagged."
-3. **Live Interactive Threshold Slider**: Drag the threshold slider on the Threshold Optimizer tab.
+3. **Submit Analyst Review Decision**: Click **`Confirm Risk`** or **`Overturn (Safe)`** directly on a table row.
+   - *Script:* "Real risk teams use human review loops — we track analyst agreement to monitor operational trust in real time."
+4. **Drag Live Threshold Slider**: Adjust the slider on the Threshold Optimizer tab.
    - *Script:* "This slider gives risk operations managers a financial steering wheel to balance manual review budgets against dispute costs in real time."
-4. **Show Production Data Drift Monitor**: Expand the Data Drift Monitor panel on the Dashboard.
-   - *Script:* "Our model was trained on historical data — here is the live KS Test ($p < 0.05$) and PSI ($\text{PSI} > 0.2$) monitor showing how we catch feature drift before precision silently degrades."
-5. **Close with Audit Documentation**: Reference `docs/labeling_methodology.md`, `docs/cost_assumptions.md`, and `docs/drift_monitoring.md`.
-   - *Script:* "All thresholding, cost formulas, and statistical tests are fully documented and auditable — 100% transparent and defensible."
+5. **Show Cost Sensitivity Chart**: Point to the FP:FN ratio sweep chart below the threshold curve.
+   - *Script:* "If our ₹500/₹1,500 estimate is off by 2–3x, here is exactly how our threshold moves — we tested our own assumptions instead of assuming they're right."
+6. **Show Production Data Drift Monitor**: Expand the Data Drift Monitor panel on the Dashboard.
+   - *Script:* "Our model was trained on historical data; here is the live KS Test ($p < 0.05$) and PSI ($\text{PSI} > 0.2$) monitor showing how we catch feature drift before precision silently degrades in production."
+7. **Show Agreement Monitor**: Point to the Analyst Agreement panel on the Dashboard.
+   - *Script:* "And here is how we know if human analysts stop trusting the model — a declining agreement rate is often an earlier warning sign than data drift itself."
+8. **Close with Audit Documentation**: Reference `docs/labeling_methodology.md`, `docs/cost_assumptions.md`, `docs/drift_monitoring.md`, and `docs/agreement_tracking.md`.
+   - *Script:* "All thresholding, cost formulas, sensitivity sweeps, and statistical tests are fully documented and auditable — 100% transparent and defensible."
 
 ---
 
@@ -95,13 +101,14 @@ Follow this 5-step demo flow when presenting to judges:
 - Node.js v18+ & npm
 - OpenMP library (`brew install libomp` on macOS)
 
-### 1. Run ML Pipeline & Drift Baseline
+### 1. Run ML Pipeline & Artifact Generation
 ```bash
 DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/labeling.py
 DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/features.py
 DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/train.py
 DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/drift_baseline.py
 DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/cost_model.py
+DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/cost_sensitivity.py
 DYLD_LIBRARY_PATH=/opt/homebrew/opt/libomp/lib python3 ml/src/evaluate.py
 ```
 
