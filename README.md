@@ -56,6 +56,9 @@ Unlike standard machine learning projects that optimize for abstract F1-scores o
 - **False-Negative Cost ($C_{\text{FN}} = ₹1,500$)**: Factors in the ₹1,500 penalty of missing a bad return order (reverse shipping + restock loss + dispute fees).
 - **Mathematical Loss Objective**:
   $$\tau^* = \arg\min_{\tau} \left( \text{FP}(\tau) \times 500 + \text{FN}(\tau) \times 1500 \right)$$
+- **Naive Baseline Comparisons**:
+  - **Flag Nothing Policy ($\tau = 1.0$) Cost**: ₹3,433,500 $\rightarrow$ **Cost-Optimal Model Saves ₹954,000 (~₹9.54 Lakhs)**.
+  - **Flag Everything Policy ($\tau = 0.0$) Cost**: ₹8,800,000 $\rightarrow$ **Cost-Optimal Model Saves ₹6,320,500 (~₹63.2 Lakhs)**.
 - **Financial Proof**: Compares total ₹ loss at the **Cost-Optimal Threshold ($\tau = 0.75$)** versus standard F1-optimal threshold, showing exact rupee savings for finance teams.
 
 ---

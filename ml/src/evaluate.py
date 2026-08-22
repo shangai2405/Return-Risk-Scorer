@@ -59,6 +59,16 @@ def run_evaluate():
     f1_f = float(f1_score(y_test, y_pred_f1, zero_division=0))
     cost_f = int(fp_f * FP_COST + fn_f * FN_COST)
 
+    # Naive Baseline Policies
+    total_pos = int(np.sum(y_test == 1))
+    total_neg = int(np.sum(y_test == 0))
+
+    cost_flag_nothing = total_pos * FN_COST
+    cost_flag_everything = total_neg * FP_COST
+
+    savings_vs_flag_nothing = cost_flag_nothing - cost_c
+    savings_vs_flag_everything = cost_flag_everything - cost_c
+
     eval_results = {
         "cost_optimal": {
             "threshold": cost_opt_thresh,
@@ -78,14 +88,33 @@ def run_evaluate():
             "confusion_matrix": {"tp": int(tp_f), "tn": int(tn_f), "fp": int(fp_f), "fn": int(fn_f)},
             "total_cost": cost_f
         },
-        "cost_savings_vs_f1_optimal": cost_f - cost_c
+        "naive_baselines": {
+            "flag_nothing": {
+                "threshold": 1.0,
+                "total_cost": cost_flag_nothing,
+                "fn_count": total_pos,
+                "fp_count": 0
+            },
+            "flag_everything": {
+                "threshold": 0.0,
+                "total_cost": cost_flag_everything,
+                "fn_count": 0,
+                "fp_count": total_neg
+            }
+        },
+        "cost_savings_vs_f1_optimal": cost_f - cost_c,
+        "cost_savings_vs_flag_nothing": savings_vs_flag_nothing,
+        "cost_savings_vs_flag_everything": savings_vs_flag_everything
     }
 
     print("\n--- EVALUATION SUMMARY ---")
     print(f"ROC-AUC: {roc_auc:.4f}")
     print(f"Cost-Optimal Threshold ({cost_opt_thresh}): Precision={prec_c:.4f}, Recall={rec_c:.4f}, F1={f1_c:.4f}, Total Cost=₹{cost_c:,.0f}")
     print(f"F1-Optimal Threshold ({f1_opt_thresh}): Precision={prec_f:.4f}, Recall={rec_f:.4f}, F1={f1_f:.4f}, Total Cost=₹{cost_f:,.0f}")
-    print(f"Business Cost Savings vs F1-Optimal: ₹{cost_f - cost_c:,.0f}")
+    print(f"Flag Nothing Policy Cost: ₹{cost_flag_nothing:,.0f}")
+    print(f"Flag Everything Policy Cost: ₹{cost_flag_everything:,.0f}")
+    print(f"--> Savings vs Flag Nothing: ₹{savings_vs_flag_nothing:,.0f}")
+    print(f"--> Savings vs Flag Everything: ₹{savings_vs_flag_everything:,.0f}")
 
     output_path = os.path.join(artifacts_dir, "eval_results.json")
     with open(output_path, "w") as f:

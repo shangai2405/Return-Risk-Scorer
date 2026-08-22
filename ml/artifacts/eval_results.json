@@ -27,5 +27,21 @@
     },
     "total_cost": 2484500
   },
-  "cost_savings_vs_f1_optimal": 5000
+  "naive_baselines": {
+    "flag_nothing": {
+      "threshold": 1.0,
+      "total_cost": 3433500,
+      "fn_count": 2289,
+      "fp_count": 0
+    },
+    "flag_everything": {
+      "threshold": 0.0,
+      "total_cost": 8800000,
+      "fn_count": 0,
+      "fp_count": 17600
+    }
+  },
+  "cost_savings_vs_f1_optimal": 5000,
+  "cost_savings_vs_flag_nothing": 954000,
+  "cost_savings_vs_flag_everything": 6320500
 }

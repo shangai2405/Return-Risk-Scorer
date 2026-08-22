@@ -32,8 +32,14 @@ Instead of selecting a threshold $\tau$ that maximizes F1-score (which treats FP
 
 $$\tau^* = \arg\min_{\tau} L(\tau)$$
 
-### Honest Metric Transparency:
-We explicitly evaluate and log the financial loss difference between the **Cost-Optimal Threshold** and the conventional **F1-Optimal Threshold**. This proves the business value in financial terms ($\text{₹ Saved}$), demonstrating why F1-optimization leads to sub-optimal operational budgets.
+### Naive Baseline Policy Comparison:
+To evaluate true financial impact, we compare our Cost-Optimal Threshold against two extreme operational baseline policies on the 19,889 test set transactions:
+
+1. **Flag Nothing Policy ($\tau = 1.0$)**: Auto-approves all orders without screening. Total Loss = ₹3,433,500.
+2. **Flag Everything Policy ($\tau = 0.0$)**: Flags all orders for manual review. Total Loss = ₹8,800,000.
+3. **Cost-Optimal Model ($\tau = 0.75$)**: Total Loss = **₹2,479,500**.
+   - **Net Financial Savings vs. Flag Nothing**: **₹954,000** (~₹9.54 Lakhs saved on 19.8k orders).
+   - **Net Financial Savings vs. Flag Everything**: **₹6,320,500** (~₹63.2 Lakhs saved on 19.8k orders).
 
 ### Sensitivity of Threshold Selection (Cost-Ratio Sweep):
 To test the robustness of our ₹500 / ₹1,500 cost assumption, `ml/src/cost_sensitivity.py` fixes $C_{\text{FP}} = ₹500$ and sweeps $C_{\text{FN}}$ from ₹500 to ₹5,000 (ratio 1:1 to 1:10). The resulting optimal threshold shifts smoothly across ratios, proving that the decision boundary responds predictably to cost assumptions rather than exhibiting fragile behavior.
