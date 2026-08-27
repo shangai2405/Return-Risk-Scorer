@@ -1,47 +1,158 @@
 {
   "cost_optimal": {
-    "threshold": 0.75,
-    "precision": 0.7640086206896551,
-    "recall": 0.30974224552206203,
-    "f1": 0.4407833385141436,
-    "roc_auc": 0.7111365001588625,
+    "threshold": 0.78,
+    "precision": 0.4717948717948718,
+    "recall": 0.052601486563750716,
+    "f1": 0.09465020576131687,
+    "roc_auc": 0.559132535897965,
+    "pr_auc": 0.18855472870223128,
+    "brier_score": 0.2438168825513251,
+    "review_rate": 0.013072333579137896,
     "confusion_matrix": {
-      "tp": 709,
-      "tn": 17381,
-      "fp": 219,
-      "fn": 1580
+      "tp": 92,
+      "tn": 13065,
+      "fp": 103,
+      "fn": 1657
     },
-    "total_cost": 2479500
+    "total_cost": 2537000
+  },
+  "constrained_operational": {
+    "threshold": 0.78,
+    "precision": 0.4717948717948718,
+    "recall": 0.052601486563750716,
+    "f1": 0.09465020576131687,
+    "review_rate": 0.013072333579137896,
+    "confusion_matrix": {
+      "tp": 92,
+      "tn": 13065,
+      "fp": 103,
+      "fn": 1657
+    },
+    "total_cost": 2537000
   },
   "f1_optimal": {
-    "threshold": 0.66,
-    "precision": 0.6934579439252336,
-    "recall": 0.3241590214067278,
-    "f1": 0.44179815421256324,
-    "roc_auc": 0.7111365001588625,
+    "threshold": 0.51,
+    "precision": 0.14083347059792456,
+    "recall": 0.4888507718696398,
+    "f1": 0.2186700767263427,
+    "roc_auc": 0.559132535897965,
+    "pr_auc": 0.18855472870223128,
+    "review_rate": 0.4069853187638265,
     "confusion_matrix": {
-      "tp": 742,
-      "tn": 17272,
-      "fp": 328,
-      "fn": 1547
+      "tp": 855,
+      "tn": 7952,
+      "fp": 5216,
+      "fn": 894
     },
-    "total_cost": 2484500
+    "total_cost": 3949000
   },
   "naive_baselines": {
     "flag_nothing": {
       "threshold": 1.0,
-      "total_cost": 3433500,
-      "fn_count": 2289,
+      "total_cost": 2623500,
+      "fn_count": 1749,
       "fp_count": 0
     },
     "flag_everything": {
       "threshold": 0.0,
-      "total_cost": 8800000,
+      "total_cost": 6584000,
       "fn_count": 0,
-      "fp_count": 17600
+      "fp_count": 13168
     }
   },
-  "cost_savings_vs_f1_optimal": 5000,
-  "cost_savings_vs_flag_nothing": 954000,
-  "cost_savings_vs_flag_everything": 6320500
+  "baselines_comparisons": {
+    "Dummy": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "roc_auc": 0.5,
+      "pr_auc": 0.11724877656365221,
+      "confusion_matrix": {
+        "tp": 0,
+        "tn": 13168,
+        "fp": 0,
+        "fn": 1749
+      }
+    },
+    "Logistic Regression": {
+      "precision": 0.12801032110091742,
+      "recall": 0.5105774728416238,
+      "f1": 0.20469914040114612,
+      "roc_auc": 0.533389110736425,
+      "pr_auc": 0.14798409142825014,
+      "confusion_matrix": {
+        "tp": 893,
+        "tn": 7085,
+        "fp": 6083,
+        "fn": 856
+      }
+    },
+    "Random Forest": {
+      "precision": 0.19002123142250532,
+      "recall": 0.10234419668381932,
+      "f1": 0.13303604607952435,
+      "roc_auc": 0.539114197003391,
+      "pr_auc": 0.16368819059234296,
+      "confusion_matrix": {
+        "tp": 179,
+        "tn": 12405,
+        "fp": 763,
+        "fn": 1570
+      }
+    }
+  },
+  "segment_evaluation": {
+    "COD": {
+      "count": 2767,
+      "precision": 0.4483,
+      "recall": 0.0394,
+      "review_rate": 0.0105,
+      "cost": 483500
+    },
+    "Prepaid": {
+      "count": 12150,
+      "precision": 0.4759,
+      "recall": 0.0557,
+      "review_rate": 0.0137,
+      "cost": 2053500
+    },
+    "New Customer": {
+      "count": 14369,
+      "precision": 0.4912,
+      "recall": 0.0333,
+      "review_rate": 0.0079,
+      "cost": 2466500
+    },
+    "Repeat Customer": {
+      "count": 548,
+      "precision": 0.4444,
+      "recall": 0.5294,
+      "review_rate": 0.1478,
+      "cost": 70500
+    },
+    "Low Value Order": {
+      "count": 4908,
+      "precision": 0.6325,
+      "recall": 0.1331,
+      "review_rate": 0.0238,
+      "cost": 744500
+    },
+    "Mid Value Order": {
+      "count": 4980,
+      "precision": 0.1579,
+      "recall": 0.0056,
+      "review_rate": 0.0038,
+      "cost": 806000
+    },
+    "High Value Order": {
+      "count": 5029,
+      "precision": 0.2542,
+      "recall": 0.0228,
+      "review_rate": 0.0117,
+      "cost": 986500
+    }
+  },
+  "cost_savings_vs_f1_optimal": 1412000,
+  "cost_savings_vs_flag_nothing": 86500,
+  "cost_savings_vs_flag_everything": 4047000
 }

@@ -217,7 +217,7 @@ This makes the model useful to a merchant risk team, not merely an ML benchmark.
 
 Every risk decision can be explained using **SHAP feature attribution**.
 
-Example:
+Example *(illustrative — actual SHAP values vary per order)*:
 
 ```text
 ORDER #18492
@@ -230,14 +230,16 @@ HOLD FOR MANUAL REVIEW
 
 Top Risk Factors
 ────────────────────────────
-Delivery delay       +0.24
-Previous returns     +0.18
-Review behaviour     +0.13
-Payment behaviour    +0.09
+Freight value        +0.21
+Prior low reviews    +0.18
+Payment type (boleto)+0.14
+Order value          +0.09
 
 Decision threshold
 0.78  ← cost-optimal threshold (selected on validation set)
 ```
+
+> **Note on features:** All factors above are available at order placement time. Post-fulfillment signals (actual delivery delay, review score for the current order) are **excluded** from the model to prevent target leakage.
 
 The goal is not simply to say:
 

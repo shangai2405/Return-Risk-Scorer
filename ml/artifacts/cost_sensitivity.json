@@ -4,65 +4,65 @@
     {
       "fn_cost": 500,
       "ratio": "1:1",
-      "optimal_threshold": 0.89,
-      "total_cost": 879000
+      "optimal_threshold": 0.93,
+      "total_cost": 947000
     },
     {
       "fn_cost": 750,
       "ratio": "1:1.5",
-      "optimal_threshold": 0.85,
-      "total_cost": 1287750
+      "optimal_threshold": 0.93,
+      "total_cost": 1420250
     },
     {
       "fn_cost": 1000,
       "ratio": "1:2",
-      "optimal_threshold": 0.75,
-      "total_cost": 1689500
+      "optimal_threshold": 0.93,
+      "total_cost": 1893500
     },
     {
       "fn_cost": 1250,
       "ratio": "1:2.5",
-      "optimal_threshold": 0.75,
-      "total_cost": 2084500
+      "optimal_threshold": 0.78,
+      "total_cost": 2363750
     },
     {
       "fn_cost": 1500,
       "ratio": "1:3",
-      "optimal_threshold": 0.75,
-      "total_cost": 2479500
+      "optimal_threshold": 0.78,
+      "total_cost": 2830500
     },
     {
       "fn_cost": 2000,
       "ratio": "1:4",
       "optimal_threshold": 0.65,
-      "total_cost": 3258000
+      "total_cost": 3695500
     },
     {
       "fn_cost": 2500,
       "ratio": "1:5",
-      "optimal_threshold": 0.61,
-      "total_cost": 4019000
+      "optimal_threshold": 0.57,
+      "total_cost": 4469000
     },
     {
       "fn_cost": 3000,
       "ratio": "1:6",
-      "optimal_threshold": 0.61,
-      "total_cost": 4767000
+      "optimal_threshold": 0.54,
+      "total_cost": 5118500
     },
     {
       "fn_cost": 4000,
       "ratio": "1:8",
-      "optimal_threshold": 0.47,
-      "total_cost": 6106500
+      "optimal_threshold": 0.5,
+      "total_cost": 6144500
     },
     {
       "fn_cost": 5000,
       "ratio": "1:10",
-      "optimal_threshold": 0.4,
-      "total_cost": 7129000
+      "optimal_threshold": 0.26,
+      "total_cost": 6405000
     }
   ],
   "chosen_ratio": "1:3",
   "chosen_fn_cost": 1500,
-  "stability_note": "Threshold is sensitive to FN cost estimate (swing of 0.20 > 0.15) across 1:1.5 to 1:4 ratio range \u2014 see documentation for business cost rationale."
+  "stability_note": "Threshold is sensitive to FN cost estimate (swing of 0.28 > 0.15) across 1:1.5 to 1:4 ratio range \u2014 see documentation for business cost rationale."
 }
