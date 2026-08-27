@@ -236,7 +236,7 @@ Review behaviour     +0.13
 Payment behaviour    +0.09
 
 Decision threshold
-0.75
+0.78  ← cost-optimal threshold (selected on validation set)
 ```
 
 The goal is not simply to say:
