@@ -13,6 +13,36 @@ In e-commerce and transaction risk management, explicit post-delivery return tra
 ## 2. Empirical Percentile-Based Threshold Derivation
 
 Rather than assuming arbitrary fixed guesses (such as a generic "7 days" or "3 complaints"), our labeling pipeline computes the empirical distributions directly from `ml/data/raw/` prior to applying the rule and saves the exact config to `ml/artifacts/labeling_thresholds.json`:
+# 🏷️ Return-Risk Labeling Methodology & Decision Boundaries
+
+## Prediction Point Definition
+The risk engine operates strictly at the **Prediction Point** defined as:
+* **Immediate Post-Purchase**: Instantly after the customer submits the order, prior to merchant fulfillment, packaging, or carrier shipping.
+* **Feature Constraint**: Only variables empirically known at this exact timestamp are valid prediction features. All post-fulfillment outcomes (e.g. actual delivery durations, customer review responses) are strictly excluded from model training to prevent target leakage.
+
+## Dataset Limitations & Empirical Proxy Target
+The Olist public e-commerce dataset does not contain explicit "Return to Origin" (RTO) or order refund flags. In order to train a return risk model, we define an **empirical proxy target**:
+
+$$\text{return\_risk} = \begin{cases} 
+1, & \text{if } \text{review\_score} \le 2 \text{ OR } \text{delivery\_delay\_days} > 4 \text{ OR } \text{prior\_low\_review\_count} \ge 2 \\
+0, & \text{otherwise}
+\end{cases}$$
+
+### Timeline and Pipeline Ordering
+```mermaid
+flowchart TD
+    A[1. Raw Order Data] --> B[2. Construct Target Proxy]
+    B --> C[3. Filter Out Future Outcomes]
+    C --> D[4. Process Prediction-Time Features]
+    D --> E[5. Train Model & Optimize Threshold]
+```
+1. **Target Generation First**: The proxy label is computed *before* the features are isolated.
+2. **Exclude Future Outcomes**: Post-fulfillment variables (`delivery_delay_days` and `review_score` for the current order) are dropped from the input features.
+3. **Namesake Preservation**: The backend API schema maintains `delivery_delay_days` as a parameter to avoid breaking the recorded video demonstrations, but this parameter is ignored during model inference vector construction.
+
+## Empirical Distribution Cutoffs
+
+Our pipeline automatically computes empirical thresholds from the dataset and saves them to `ml/artifacts/labeling_thresholds.json`:
 
 ```json
 {
@@ -24,14 +54,6 @@ Rather than assuming arbitrary fixed guesses (such as a generic "7 days" or "3 c
   "review_score_rationale": "Olist's own rating scale treats 1-2 as explicit dissatisfaction"
 }
 ```
-
-### Empirical Results Summary:
-- **Delivery Delay Threshold**: The 90th percentile delivery delay across all orders was evaluated at **4 days** (relative to estimated delivery date). Therefore, `delivery_delay_days > 4` is set as the operational delay threshold, ensuring the cutoff reflects extreme logistics friction rather than minor carrier variance.
-- **Prior Low-Review Threshold**: Among repeat customers ($\ge 1$ prior order), $2,818$ customers had $0$ low reviews, $507$ had $1$, $19$ had $2$, and $1$ had $3$. The threshold $\ge 2$ represents the smallest integer value where fewer than $10\%$ ($<1.0\%$) of repeat customers exceed it.
-- **Review Score Threshold**: `review_score <= 2` is maintained with explicit semantic justification: Olist's own 5-star rating scale treats 1 and 2 stars as explicit buyer dissatisfaction and complaint triggers.
-
-### Why Percentile-Based Thresholding is Defensible:
-Percentile-based thresholding is significantly more defensible than hardcoded guesses because it adapts dynamically to the target market's actual operational environment. E-commerce logistics and buyer behavior vary dramatically across regions (e.g. Brazilian logistics vs. domestic Indian express dispatch). By deriving thresholds from empirical percentiles (90th percentile delay cutoff and top 10% repeat complaint tail), the labeling logic reflects true statistical anomalies within this specific dataset rather than imposing arbitrary assumptions that might misclassify standard fulfillment performance in a different market.
 
 ---
 

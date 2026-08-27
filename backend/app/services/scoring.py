@@ -11,14 +11,20 @@ def build_feature_vector(order_input: OrderInput) -> pd.DataFrame:
     data = {col: 0.0 for col in feature_cols}
 
     # Set numeric fields
-    data["order_value"] = float(order_input.order_value)
-    data["freight_value"] = float(order_input.freight_value)
-    data["installments"] = float(order_input.installments)
-    data["delivery_delay_days"] = float(order_input.delivery_delay_days)
-    data["discount_flag"] = int(order_input.discount_flag)
-    data["customer_order_count"] = int(order_input.customer_order_count)
-    data["prior_low_review_count"] = int(order_input.prior_low_review_count)
-    data["address_state_mismatch"] = int(order_input.address_state_mismatch)
+    if "order_value" in data:
+        data["order_value"] = float(order_input.order_value)
+    if "freight_value" in data:
+        data["freight_value"] = float(order_input.freight_value)
+    if "installments" in data:
+        data["installments"] = float(order_input.installments)
+    if "discount_flag" in data:
+        data["discount_flag"] = int(order_input.discount_flag)
+    if "customer_order_count" in data:
+        data["customer_order_count"] = int(order_input.customer_order_count)
+    if "prior_low_review_count" in data:
+        data["prior_low_review_count"] = int(order_input.prior_low_review_count)
+    if "address_state_mismatch" in data:
+        data["address_state_mismatch"] = int(order_input.address_state_mismatch)
 
     # Set payment_type one-hot
     p_col = f"payment_type_{order_input.payment_type}"

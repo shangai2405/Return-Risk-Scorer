@@ -3,7 +3,25 @@ import json
 import pandas as pd
 import numpy as np
 
+"""
+PREDICTION POINT & TARGET METHODOLOGY DEFINITION:
+
+1. Prediction Point:
+   - Evaluated immediately after order placement, before fulfillment.
+   - Only information available at this time is allowed in the feature pipeline.
+   - Outcomes known after placement (such as actual delivery delays or review scores) are STRICTLY EXCLUDED.
+
+2. Target Definition (Empirical Proxy):
+   - 1 = observed/proxy risky outcome (low review, extreme delivery delay, or high prior customer review complaints)
+   - 0 = otherwise
+   - Note on Dataset Limitation: The Olist dataset does not contain clean, direct RTO (Return to Origin) 
+     labels. We therefore construct an empirical proxy target using observed order outcomes.
+   - Critical Ordering: This target is generated BEFORE the predictive feature pipeline is executed, 
+     allowing us to use outcome variables for the label while filtering them out of model features.
+"""
+
 def run_labeling():
+
     raw_dir = "ml/data/raw"
     processed_dir = "ml/data/processed"
     artifacts_dir = "ml/artifacts"

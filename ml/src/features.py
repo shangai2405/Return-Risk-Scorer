@@ -87,7 +87,6 @@ def run_features():
         "order_value",
         "freight_value",
         "installments",
-        "delivery_delay_days",
         "discount_flag",
         "customer_order_count",
         "prior_low_review_count",

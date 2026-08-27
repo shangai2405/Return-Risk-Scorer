@@ -1,0 +1,83 @@
+[
+  {
+    "threshold": 0.5,
+    "precision": 0.165,
+    "recall": 0.545,
+    "review_rate": 0.4253,
+    "fp": 5297,
+    "fn": 874,
+    "expected_financial_loss": 3959500
+  },
+  {
+    "threshold": 0.55,
+    "precision": 0.1893,
+    "recall": 0.3623,
+    "review_rate": 0.2464,
+    "fp": 2980,
+    "fn": 1225,
+    "expected_financial_loss": 3327500
+  },
+  {
+    "threshold": 0.6,
+    "precision": 0.2231,
+    "recall": 0.2113,
+    "review_rate": 0.122,
+    "fp": 1414,
+    "fn": 1515,
+    "expected_financial_loss": 2979500
+  },
+  {
+    "threshold": 0.65,
+    "precision": 0.2664,
+    "recall": 0.1223,
+    "review_rate": 0.0591,
+    "fp": 647,
+    "fn": 1686,
+    "expected_financial_loss": 2852500
+  },
+  {
+    "threshold": 0.7,
+    "precision": 0.2713,
+    "recall": 0.0531,
+    "review_rate": 0.0252,
+    "fp": 274,
+    "fn": 1819,
+    "expected_financial_loss": 2865500
+  },
+  {
+    "threshold": 0.75,
+    "precision": 0.3515,
+    "recall": 0.0302,
+    "review_rate": 0.0111,
+    "fp": 107,
+    "fn": 1863,
+    "expected_financial_loss": 2848000
+  },
+  {
+    "threshold": 0.8,
+    "precision": 0.495,
+    "recall": 0.026,
+    "review_rate": 0.0068,
+    "fp": 51,
+    "fn": 1871,
+    "expected_financial_loss": 2832000
+  },
+  {
+    "threshold": 0.85,
+    "precision": 0.5211,
+    "recall": 0.0193,
+    "review_rate": 0.0048,
+    "fp": 34,
+    "fn": 1884,
+    "expected_financial_loss": 2843000
+  },
+  {
+    "threshold": 0.9,
+    "precision": 0.6667,
+    "recall": 0.0167,
+    "review_rate": 0.0032,
+    "fp": 16,
+    "fn": 1889,
+    "expected_financial_loss": 2841500
+  }
+]

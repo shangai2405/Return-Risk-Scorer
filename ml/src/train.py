@@ -22,15 +22,19 @@ def run_train():
     df["order_purchase_timestamp"] = pd.to_datetime(df["order_purchase_timestamp"])
     df = df.sort_values("order_purchase_timestamp").reset_index(drop=True)
 
-    # 80/20 chronological split
+    # 70/15/15 chronological split
     n = len(df)
-    train_size = int(n * 0.8)
+    train_size = int(n * 0.70)
+    val_size = int(n * 0.15)
 
     train_df = df.iloc[:train_size]
-    test_df = df.iloc[train_size:]
+    val_df = df.iloc[train_size:train_size + val_size]
+    test_df = df.iloc[train_size + val_size:]
 
     X_train = train_df[feature_cols]
     y_train = train_df[target_col]
+    X_val = val_df[feature_cols]
+    y_val = val_df[target_col]
     X_test = test_df[feature_cols]
     y_test = test_df[target_col]
 
@@ -40,6 +44,7 @@ def run_train():
     scale_pos_weight = neg_count / pos_count if pos_count > 0 else 1.0
 
     print(f"Train samples: {len(X_train)} (Positive: {pos_count}, Negative: {neg_count})")
+    print(f"Val samples: {len(X_val)}")
     print(f"Test samples: {len(X_test)}")
     print(f"scale_pos_weight: {scale_pos_weight:.3f}")
 
@@ -68,9 +73,11 @@ def run_train():
         pickle.dump(explainer, f)
     print(f"Saved SHAP explainer to {explainer_path}")
 
-    # Save test set partition for cost modeling & evaluation scripts
+    # Save partitions for downstream modeling
+    train_df.to_csv(os.path.join(processed_dir, "train_features.csv"), index=False)
+    val_df.to_csv(os.path.join(processed_dir, "val_features.csv"), index=False)
     test_df.to_csv(os.path.join(processed_dir, "test_features.csv"), index=False)
-    print(f"Saved test features partition ({len(test_df)} rows) to test_features.csv")
+    print(f"Saved train, val, and test partitions to {processed_dir}")
 
 if __name__ == "__main__":
     run_train()
