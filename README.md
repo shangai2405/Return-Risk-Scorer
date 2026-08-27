@@ -362,18 +362,16 @@ Evaluation
 
 # 9. Baseline Comparison
 
-The system should be evaluated against simpler alternatives rather than presenting XGBoost in isolation.
+All models are trained on the same `train_features.csv` split and evaluated on the same untouched `test_features.csv`. Financial cost uses ₹500 FP / ₹1,500 FN at each model's default threshold (τ = 0.50), except for the cost-optimized XGBoost which uses τ = 0.78 (selected on validation set).
 
-Recommended comparison:
-
-| Model / Policy             | Precision | Recall |    F1 | Financial Cost |
-| -------------------------- | --------: | -----: | ----: | -------------: |
-| Flag Nothing               |         — |      — |     — |       ₹34.335L |
-| Flag Everything            |         — |      — |     — |       ₹88.000L |
-| Logistic Regression        |         — |      — |     — |              — |
-| Random Forest              |         — |      — |     — |              — |
-| XGBoost                    |         — |      — |     — |              — |
-| **Cost-Optimized XGBoost** |     **—** |  **—** | **—** |   **₹24.795L** |
+| Model / Policy               | Precision | Recall | ROC-AUC | PR-AUC | Financial Cost |
+| :--------------------------- | --------: | -----: | ------: | -----: | -------------: |
+| Flag Nothing (τ = 1.0)       |        — |     — |      — |     — |    ₹26.235L |
+| Flag Everything (τ = 0.0)    |        — |     — |      — |     — |    ₹65.840L |
+| Logistic Regression (τ=0.50) |    20.5% | 54.7% |  0.5334 | 0.1704 |             — |
+| Random Forest (τ=0.50)       |    12.4% | 33.7% |  0.5391 | 0.1742 |             — |
+| XGBoost (τ=0.50)             |    16.5% | 54.5% |  0.5591 | 0.1886 |    ₹39.600L |
+| **Cost-Optimized XGBoost (τ=0.78)** | **47.2%** | **5.3%** | **0.5591** | **0.1886** | **₹25.370L** |
 
 The key comparison is not only:
 
@@ -383,7 +381,10 @@ but:
 
 > **Which policy produces the lowest expected merchant loss?**
 
+XGBoost has the highest discrimination (PR-AUC 0.1886 vs. 0.1742 Random Forest, 0.1704 LR). At the cost-optimal threshold, it also produces the lowest expected financial loss of any evaluated policy.
+
 ---
+
 
 # 10. System Architecture
 
