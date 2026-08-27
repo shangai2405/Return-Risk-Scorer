@@ -108,19 +108,34 @@ This is fundamentally different from blindly optimizing Accuracy or F1.
 
 # 2. Held-Out Model Evaluation
 
-The model is evaluated on a **held-out test set**, separate from training and threshold selection.
+The model is evaluated on a **held-out test set (15% of data, chronologically last)**, strictly separate from training (70%) and threshold selection (15% validation).
 
-### Test-set performance
+The pipeline is: `train_features.csv` → model training → `val_features.csv` → threshold optimization → `test_features.csv` → final evaluation only.
 
-| Metric       |                    Result |
-| ------------ | ------------------------: |
-| Precision    | **[INSERT ACTUAL VALUE]** |
-| Recall       | **[INSERT ACTUAL VALUE]** |
-| F1 Score     | **[INSERT ACTUAL VALUE]** |
-| ROC-AUC      | **[INSERT ACTUAL VALUE]** |
-| Test samples | **[INSERT ACTUAL VALUE]** |
+### Test-set performance (Cost-Optimal Threshold τ = 0.78)
 
-> **Do not replace these values with training metrics. These numbers should come directly from the final evaluation pipeline.**
+| Metric        |      Result |
+| ------------- | ----------: |
+| Precision     |  **0.4718** |
+| Recall        |  **0.0526** |
+| F1 Score      |  **0.0947** |
+| ROC-AUC       |  **0.5591** |
+| PR-AUC        |  **0.1886** |
+| Brier Score   |  **0.2438** |
+| Review Rate   |   **1.31%** |
+| Test samples  |  **14,917** |
+
+### Baseline Model Comparison (Test Set)
+
+| Classifier               | F1-Score | ROC-AUC | PR-AUC |
+| :----------------------- | -------: | ------: | -----: |
+| Dummy (Class Prior)      |   0.0000 |  0.5000 | 0.1591 |
+| Logistic Regression      |   0.2047 |  0.5334 | 0.1704 |
+| Random Forest            |   0.1330 |  0.5391 | 0.1742 |
+| XGBoost (Standard)       |   0.2187 |  0.5591 | 0.1886 |
+| **Cost-Optimized XGBoost** | **0.0947** | **0.5591** | **0.1886** |
+
+*Note: Precision/recall at a given threshold are policy decisions, not raw model capability. The cost-optimized XGBoost achieves the lowest financial loss by tuning threshold to the asymmetric 1:3 FP/FN cost ratio.*
 
 ### Why both Precision and Recall matter
 
@@ -140,31 +155,36 @@ from
 
 # 3. Financial Impact
 
-The model's threshold is selected using the financial cost of mistakes rather than an arbitrary probability such as `0.5`.
+The model's threshold is selected using the financial cost of mistakes rather than an arbitrary probability such as `0.5`. All numbers below are from the **untouched test set**.
 
-Current evaluation:
+| Policy                            |   Expected Cost |    Savings vs. Flag Nothing |
+| --------------------------------- | --------------: | --------------------------: |
+| Flag Nothing (τ = 1.0)            |    ₹26.235 Lakhs |                           — |
+| Flag Everything (τ = 0.0)         |    ₹65.840 Lakhs |                 -₹39.6 Lakhs |
+| **Cost-Optimized Model (τ = 0.78)** | **₹25.370 Lakhs** |        **₹0.865 Lakhs saved** |
+| Constrained (≤5% Review Rate)     |    ₹25.370 Lakhs |           ₹0.865 Lakhs saved |
 
-| Policy                   |     Expected Cost |
-| ------------------------ | ----------------: |
-| Flag Nothing             |     ₹34.335 Lakhs |
-| Flag Everything          |     ₹88.000 Lakhs |
-| **Cost-Optimized Model** | **₹24.795 Lakhs** |
+### Merchant Operational Constraint
+
+Beyond pure cost minimization, the system supports a merchant budget constraint:
+
+> **"Only review ≤ 5% of orders manually."**
+
+At this budget, the threshold optimizes to **τ = 0.78**, achieving a **1.31% actual review rate** — well within the operational limit.
 
 ### Result
 
-**Cost-optimized policy saves approximately ₹9.54 Lakhs vs. flagging nothing.**
+**Cost-optimized policy saves ₹86,500 vs. the Flag Nothing policy on the test set.**
 
-It saves approximately:
-
-**₹63.21 Lakhs vs. flagging everything.**
+**It saves ₹40.47 Lakhs vs. flagging everything.**
 
 The current cost-optimal threshold is:
 
 ```text
-τ = 0.75
+τ = 0.78
 ```
 
-This threshold is selected because it minimizes the modeled financial loss under the defined FP/FN costs.
+This threshold is selected on the **validation set** (not the test set) to minimize the modeled financial loss, then applied to the untouched test set for final reporting.
 
 ---
 
