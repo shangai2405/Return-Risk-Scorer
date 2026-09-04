@@ -79,17 +79,25 @@ def run_evaluate():
     cost_co = int(fp_co * FP_COST + fn_co * FN_COST)
     rev_rate_co = float((fp_co + tp_co) / n_test)
 
-    # 3. Find F1-optimal threshold (re-swept on validation / train for comparison, or here for local reference)
-    best_f1 = -1.0
+    # 3. Find F1-optimal threshold — swept on the VALIDATION set to avoid test-set leakage.
+    # The previously used test-set sweep was an inconsistency: the cost-optimal and constrained
+    # thresholds are both selected on val, so this comparison baseline must be too.
+    val_df = pd.read_csv(os.path.join(processed_dir, "val_features.csv"))
+    X_val = val_df[feature_cols]
+    y_val = val_df["return_risk"].values
+    y_prob_val = model.predict_proba(X_val)[:, 1]
+
+    best_f1_val = -1.0
     f1_opt_thresh = 0.5
     for t in np.arange(0.05, 0.96, 0.01):
         t_val = round(float(t), 2)
-        y_pred = (y_prob >= t_val).astype(int)
-        score = f1_score(y_test, y_pred, zero_division=0)
-        if score > best_f1:
-            best_f1 = score
+        y_pred_v = (y_prob_val >= t_val).astype(int)
+        score = f1_score(y_val, y_pred_v, zero_division=0)
+        if score > best_f1_val:
+            best_f1_val = score
             f1_opt_thresh = t_val
 
+    # Apply the val-selected F1 threshold to the test set for final evaluation
     y_pred_f1 = (y_prob >= f1_opt_thresh).astype(int)
     tn_f, fp_f, fn_f, tp_f = confusion_matrix(y_test, y_pred_f1).ravel()
     prec_f = float(precision_score(y_test, y_pred_f1, zero_division=0))

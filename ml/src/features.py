@@ -83,13 +83,18 @@ def run_features():
         df[col_name] = (df["product_category_clean"] == cat).astype(int)
 
     # Feature columns specification
+    # NOTE: prior_low_review_count is intentionally excluded.
+    # It is one of the three conditions that defines return_risk=1 in labeling.py
+    # (rule_prior_reviews: prior_low_review_count >= threshold). Including it as a
+    # raw feature creates definitional overlap — the model can trivially threshold
+    # this single column to recover ~1/3 of the positive class, inflating
+    # precision/recall without learning genuine return-risk signal.
     feature_cols = [
         "order_value",
         "freight_value",
         "installments",
         "discount_flag",
         "customer_order_count",
-        "prior_low_review_count",
         "address_state_mismatch",
     ] + [f"payment_type_{p}" for p in payment_types] + [
         f"cat_{cat.replace(' ', '_').replace('&', 'and')}" for cat in top_categories + ["other"]
