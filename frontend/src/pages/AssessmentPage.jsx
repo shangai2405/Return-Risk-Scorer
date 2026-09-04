@@ -5,12 +5,17 @@ import { InfoTooltip } from '../components/InfoTooltip';
 import { scoreOrder } from '../api/client';
 import { Play, AlertCircle, ShieldAlert, ShieldCheck, ChevronDown, Activity } from 'lucide-react';
 
+// delivery_delay_days — accepted by backend schema but silently dropped before scoring
+// (feature is not in the model's feature_cols; retained in payload for schema stability).
+// prior_low_review_count — removed from model features to fix label/feature circularity
+// (it was one of three conditions defining return_risk=1; including it as a raw input
+// let the model trivially recover the labeling rule rather than learning genuine signal).
+// Both fields are sent in the API payload with fixed defaults but are NOT exposed in the
+// UI — showing editable fields whose values don't move the score is a live demo failure.
 const FIELD_META = {
-  order_value:            { label: 'Order Value (₹)',         tip: 'Total price of all items in the customer cart.',                       required: true },
-  freight_value:          { label: 'Freight Fee (₹)',          tip: 'Shipping and logistics fee billed for this fulfillment.',              required: true },
-  delivery_delay_days:    { label: 'Delivery Delay (Days)',    tip: 'Days past estimated delivery date (negative values like -5 mean arrived 5 days early / on time).', required: true },
-  prior_low_review_count: { label: 'Prior Low Reviews (≤ 2★)', tip: 'Count of past 1-star or 2-star ratings given by this customer.',      required: true },
-  installments:           { label: 'Installment Months',      tip: 'Number of monthly installments selected by the customer.',             required: true },
+  order_value:  { label: 'Order Value (₹)',    tip: 'Total price of all items in the customer cart.',                    required: true },
+  freight_value: { label: 'Freight Fee (₹)',   tip: 'Shipping and logistics fee billed for this fulfillment.',           required: true },
+  installments: { label: 'Installment Months', tip: 'Number of monthly installments selected by the customer.',          required: true },
 };
 
 export default function AssessmentPage() {
@@ -19,10 +24,8 @@ export default function AssessmentPage() {
     order_value: '280',
     freight_value: '35',
     installments: '3',
-    delivery_delay_days: '9.5',
     discount_flag: 0,
     customer_order_count: '1',
-    prior_low_review_count: '2',
     address_state_mismatch: 1,
     payment_type: 'boleto',
     product_category: 'health_beauty',
@@ -37,16 +40,16 @@ export default function AssessmentPage() {
 
   const fillHigh = () => {
     setInputs({ order_id: 'ORD-HIGH-01', order_value: '450', freight_value: '65',
-      installments: '6', delivery_delay_days: '9.5', discount_flag: 0,
-      customer_order_count: '1', prior_low_review_count: '3',
+      installments: '6', discount_flag: 0,
+      customer_order_count: '1',
       address_state_mismatch: 1, payment_type: 'boleto', product_category: 'health_beauty' });
     setValidError(null); setResult(null);
   };
 
   const fillLow = () => {
     setInputs({ order_id: 'ORD-SAFE-01', order_value: '120', freight_value: '15',
-      installments: '1', delivery_delay_days: '-5', discount_flag: 0,
-      customer_order_count: '1', prior_low_review_count: '0',
+      installments: '1', discount_flag: 0,
+      customer_order_count: '1',
       address_state_mismatch: 0, payment_type: 'credit_card', product_category: 'health_beauty' });
     setValidError(null); setResult(null);
   };
@@ -70,10 +73,14 @@ export default function AssessmentPage() {
         order_value: parseFloat(inputs.order_value),
         freight_value: parseFloat(inputs.freight_value),
         installments: parseInt(inputs.installments, 10),
-        delivery_delay_days: parseFloat(inputs.delivery_delay_days),
+        // delivery_delay_days: sent as default 0.0 — field is accepted by API schema
+        // but dropped before inference (not in model feature_cols).
+        delivery_delay_days: 0.0,
         discount_flag: inputs.discount_flag,
         customer_order_count: parseInt(inputs.customer_order_count, 10) || 0,
-        prior_low_review_count: parseInt(inputs.prior_low_review_count, 10),
+        // prior_low_review_count: sent as 0 — removed from model features to fix
+        // label/feature circularity. Kept in payload for backend schema stability.
+        prior_low_review_count: 0,
         address_state_mismatch: inputs.address_state_mismatch,
         payment_type: inputs.payment_type,
         product_category: inputs.product_category,

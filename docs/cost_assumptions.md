@@ -33,13 +33,16 @@ Instead of selecting a threshold $\tau$ that maximizes F1-score (which treats FP
 $$\tau^* = \arg\min_{\tau} L(\tau)$$
 
 ### Naive Baseline Policy Comparison:
-To evaluate true financial impact, we compare our Cost-Optimal Threshold against two extreme operational baseline policies on the 19,889 test set transactions:
+To evaluate true financial impact, we compare our Cost-Optimal Threshold against two extreme operational baseline policies on the 14,917 held-out test set transactions:
 
-1. **Flag Nothing Policy ($\tau = 1.0$)**: Auto-approves all orders without screening. Total Loss = ₹3,433,500.
-2. **Flag Everything Policy ($\tau = 0.0$)**: Flags all orders for manual review. Total Loss = ₹8,800,000.
-3. **Cost-Optimal Model ($\tau = 0.75$)**: Total Loss = **₹2,479,500**.
-   - **Net Financial Savings vs. Flag Nothing**: **₹954,000** (~₹9.54 Lakhs saved on 19.8k orders).
-   - **Net Financial Savings vs. Flag Everything**: **₹6,320,500** (~₹63.2 Lakhs saved on 19.8k orders).
+> **Note on honest metrics:** A prior model version included `prior_low_review_count` as a model feature, which created definitional overlap with the label (that column is one of three conditions defining `return_risk = 1`). That feature has been removed. The numbers below reflect the corrected model — they are lower, and that is the honest result.
+
+1. **Flag Nothing Policy (τ = 1.0)**: Auto-approves all orders without screening. Total Loss = **₹2,623,500**.
+2. **Flag Everything Policy (τ = 0.0)**: Flags all orders for manual review. Total Loss = **₹6,584,000**.
+3. **Cost-Optimal Model (τ = 0.81)**: Total Loss = **₹2,534,500**.
+   - **Net Financial Savings vs. Flag Nothing**: **₹89,000** saved on 14.9k orders.
+   - **Net Financial Savings vs. Flag Everything**: **₹4,049,500** (~₹40.5 Lakhs saved vs. worst-case policy).
+   - **Precision at threshold**: 58.2% — when the model flags an order, it is correct more than half the time.
 
 ### Sensitivity of Threshold Selection (Cost-Ratio Sweep):
 To test the robustness of our ₹500 / ₹1,500 cost assumption, `ml/src/cost_sensitivity.py` fixes $C_{\text{FP}} = ₹500$ and sweeps $C_{\text{FN}}$ from ₹500 to ₹5,000 (ratio 1:1 to 1:10). The resulting optimal threshold shifts smoothly across ratios, proving that the decision boundary responds predictably to cost assumptions rather than exhibiting fragile behavior.
