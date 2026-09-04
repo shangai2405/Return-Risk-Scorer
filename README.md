@@ -630,6 +630,10 @@ This transforms the project from a standalone ML model into an **end-to-end risk
 
 The current implementation is a research/prototype system built around the available dataset.
 
+### Dataset Disclosure
+
+**The model is trained on the [Olist dataset](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — Brazilian e-commerce transaction data, not Indian merchant data.** The ₹500 / ₹1,500 cost constants and the RTO framing used throughout this project are illustrative of the target deployment context (Indian payment gateways, Razorpay merchants); they are not derived from Indian transaction distributions. The underlying delivery patterns, payment method mix, and review behaviour the model learned from are Brazilian. A deployment against real Razorpay or Indian merchant data would require retraining on that data, and the model's discrimination and cost figures would change accordingly.
+
 Production deployment would require:
 
 * live merchant/order integrations
