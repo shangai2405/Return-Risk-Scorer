@@ -1,63 +1,63 @@
 {
   "cost_optimal": {
-    "threshold": 0.81,
-    "precision": 0.582089552238806,
-    "recall": 0.044596912521440824,
-    "f1": 0.08284652150823155,
-    "roc_auc": 0.5536262649998923,
-    "pr_auc": 0.17491335551110931,
-    "brier_score": 0.24564143688349735,
-    "review_rate": 0.00898303948515117,
+    "threshold": 0.79,
+    "precision": 0.49444444444444446,
+    "recall": 0.05460122699386503,
+    "f1": 0.09834254143646409,
+    "roc_auc": 0.5666333992218049,
+    "pr_auc": 0.18262223199594194,
+    "brier_score": 0.24180386711097046,
+    "review_rate": 0.01206676945766575,
     "confusion_matrix": {
-      "tp": 78,
-      "tn": 13112,
-      "fp": 56,
-      "fn": 1671
+      "tp": 89,
+      "tn": 13196,
+      "fp": 91,
+      "fn": 1541
     },
-    "total_cost": 2534500
+    "total_cost": 2357000
   },
   "constrained_operational": {
-    "threshold": 0.81,
-    "precision": 0.582089552238806,
-    "recall": 0.044596912521440824,
-    "f1": 0.08284652150823155,
-    "review_rate": 0.00898303948515117,
+    "threshold": 0.79,
+    "precision": 0.49444444444444446,
+    "recall": 0.05460122699386503,
+    "f1": 0.09834254143646409,
+    "review_rate": 0.01206676945766575,
     "confusion_matrix": {
-      "tp": 78,
-      "tn": 13112,
-      "fp": 56,
-      "fn": 1671
+      "tp": 89,
+      "tn": 13196,
+      "fp": 91,
+      "fn": 1541
     },
-    "total_cost": 2534500
+    "total_cost": 2357000
   },
   "f1_optimal": {
-    "threshold": 0.55,
-    "precision": 0.1477438136826783,
-    "recall": 0.3481989708404803,
-    "f1": 0.20746039856923862,
-    "roc_auc": 0.5536262649998923,
-    "pr_auc": 0.17491335551110931,
-    "review_rate": 0.2763290205805457,
+    "threshold": 0.54,
+    "precision": 0.14138438880706922,
+    "recall": 0.35337423312883437,
+    "f1": 0.20196353436185133,
+    "roc_auc": 0.5666333992218049,
+    "pr_auc": 0.18262223199594194,
+    "review_rate": 0.2731112153918348,
     "confusion_matrix": {
-      "tp": 609,
-      "tn": 9655,
-      "fp": 3513,
-      "fn": 1140
+      "tp": 576,
+      "tn": 9789,
+      "fp": 3498,
+      "fn": 1054
     },
-    "total_cost": 3466500
+    "total_cost": 3330000
   },
   "naive_baselines": {
     "flag_nothing": {
       "threshold": 1.0,
-      "total_cost": 2623500,
-      "fn_count": 1749,
+      "total_cost": 2445000,
+      "fn_count": 1630,
       "fp_count": 0
     },
     "flag_everything": {
       "threshold": 0.0,
-      "total_cost": 6584000,
+      "total_cost": 6643500,
       "fn_count": 0,
-      "fp_count": 13168
+      "fp_count": 13287
     }
   },
   "baselines_comparisons": {
@@ -66,93 +66,93 @@
       "recall": 0.0,
       "f1": 0.0,
       "roc_auc": 0.5,
-      "pr_auc": 0.11724877656365221,
+      "pr_auc": 0.10927130119997318,
       "confusion_matrix": {
         "tp": 0,
-        "tn": 13168,
+        "tn": 13287,
         "fp": 0,
-        "fn": 1749
+        "fn": 1630
       }
     },
     "Logistic Regression": {
-      "precision": 0.12634221168595733,
-      "recall": 0.5180102915951973,
-      "f1": 0.2031390134529148,
-      "roc_auc": 0.5215193050776454,
-      "pr_auc": 0.13275349398028316,
+      "precision": 0.12217461958930419,
+      "recall": 0.507361963190184,
+      "f1": 0.19692820573877842,
+      "roc_auc": 0.5437046959041565,
+      "pr_auc": 0.14398128930982937,
       "confusion_matrix": {
-        "tp": 906,
-        "tn": 6903,
-        "fp": 6265,
-        "fn": 843
+        "tp": 827,
+        "tn": 7345,
+        "fp": 5942,
+        "fn": 803
       }
     },
     "Random Forest": {
-      "precision": 0.17582417582417584,
-      "recall": 0.09148084619782733,
-      "f1": 0.12034599473486272,
-      "roc_auc": 0.5369256525339596,
-      "pr_auc": 0.15838956950142657,
+      "precision": 0.1961783439490446,
+      "recall": 0.09447852760736196,
+      "f1": 0.12753623188405797,
+      "roc_auc": 0.5434173168939981,
+      "pr_auc": 0.15775105605616563,
       "confusion_matrix": {
-        "tp": 160,
-        "tn": 12418,
-        "fp": 750,
-        "fn": 1589
+        "tp": 154,
+        "tn": 12656,
+        "fp": 631,
+        "fn": 1476
       }
     }
   },
   "segment_evaluation": {
     "COD": {
       "count": 2767,
-      "precision": 0.5,
-      "recall": 0.0273,
-      "review_rate": 0.0065,
-      "cost": 486000
+      "precision": 0.5238,
+      "recall": 0.0383,
+      "review_rate": 0.0076,
+      "cost": 419000
     },
     "Prepaid": {
       "count": 12150,
-      "precision": 0.5948,
-      "recall": 0.0486,
-      "review_rate": 0.0095,
-      "cost": 2048500
+      "precision": 0.4906,
+      "recall": 0.0581,
+      "review_rate": 0.0131,
+      "cost": 1938000
     },
     "New Customer": {
       "count": 14369,
-      "precision": 0.5269,
-      "recall": 0.0291,
-      "review_rate": 0.0065,
-      "cost": 2470000
+      "precision": 0.5455,
+      "recall": 0.0345,
+      "review_rate": 0.0069,
+      "cost": 2289000
     },
     "Repeat Customer": {
       "count": 548,
-      "precision": 0.7073,
-      "recall": 0.4265,
-      "review_rate": 0.0748,
-      "cost": 64500
+      "precision": 0.4321,
+      "recall": 0.5385,
+      "review_rate": 0.1478,
+      "cost": 68000
     },
     "Low Value Order": {
       "count": 4908,
-      "precision": 0.6698,
-      "recall": 0.1277,
-      "review_rate": 0.0216,
-      "cost": 745000
+      "precision": 0.6293,
+      "recall": 0.1415,
+      "review_rate": 0.0236,
+      "cost": 686000
     },
     "Mid Value Order": {
       "count": 4980,
-      "precision": 0.0,
-      "recall": 0.0,
-      "review_rate": 0.0008,
-      "cost": 804500
+      "precision": 0.1667,
+      "recall": 0.006,
+      "review_rate": 0.0036,
+      "cost": 750000
     },
     "High Value Order": {
       "count": 5029,
-      "precision": 0.2917,
-      "recall": 0.0106,
-      "review_rate": 0.0048,
-      "cost": 985000
+      "precision": 0.2826,
+      "recall": 0.0211,
+      "review_rate": 0.0091,
+      "cost": 921000
     }
   },
-  "cost_savings_vs_f1_optimal": 932000,
-  "cost_savings_vs_flag_nothing": 89000,
-  "cost_savings_vs_flag_everything": 4049500
+  "cost_savings_vs_f1_optimal": 973000,
+  "cost_savings_vs_flag_nothing": 88000,
+  "cost_savings_vs_flag_everything": 4286500
 }

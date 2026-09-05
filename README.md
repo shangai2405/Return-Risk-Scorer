@@ -114,43 +114,46 @@ The model is evaluated on a **held-out test set (15% of data, chronologically la
 
 The pipeline is: `train_features.csv` → model training → `val_features.csv` → threshold optimization → `test_features.csv` → final evaluation only.
 
+> **What the model predicts:** The model predicts whether an order will result in a **1–2 star customer review** — the closest available single-criterion proxy for customer dissatisfaction and return/dispute risk in the Olist dataset. It does not directly predict fraud, chargebacks, or physical returns; a production deployment on Indian merchant data would use richer labels and features.
+
 > **Important**: The metrics below depend heavily on which **threshold/policy** is chosen. ROC-AUC and PR-AUC are threshold-independent measures of raw model discrimination. Precision and recall are policy outcomes.
 
 ### Threshold-Independent Model Capability (Test Set)
 
 | Metric       |      Result | Interpretation |
 | ------------ | ----------: | :------------- |
-| **ROC-AUC**  |  **0.5591** | Better than random (0.50 = random) |
-| **PR-AUC**   |  **0.1886** | 18.9% vs. 15.9% random baseline (class prevalence = 15.9%) — positive signal |
-| Brier Score  |    0.2438   | Calibration quality of probability estimates |
-| Test samples |    14,917   | Chronologically held-out orders |
+| **ROC-AUC**  |  **0.5666** | Better than random (0.50 = random); modest signal given prediction-time-only features |
+| **PR-AUC**   |  **0.1826** | 18.3% vs. 10.9% random baseline (class prevalence = 10.9%) — positive signal above chance |
+| Brier Score  |    0.2418   | Calibration quality of probability estimates |
+| Test samples |    14,917   | Chronologically held-out orders (1,630 positive / 13,287 negative) |
 
-> These features are deliberately limited to **prediction-time only information** (available at order placement, before fulfillment). Future signals such as actual delivery delays and customer review scores are excluded to prevent data leakage. This is the reason discriminative power is modest — it is an honest representation of what is knowable at the time of the decision.
+> These features are deliberately limited to **prediction-time only information** (available at order placement, before fulfillment). Post-fulfillment signals such as actual delivery delays and current-order review scores are excluded to prevent data leakage. This is the reason discriminative power is modest — it is an honest representation of what is knowable at the time of the decision.
 
-### Baseline Model Comparison (Test Set, threshold-independent ROC-AUC)
+### Baseline Model Comparison (Test Set, threshold-independent)
 
 | Classifier               | ROC-AUC | PR-AUC | Notes |
 | :----------------------- | ------: | -----: | :---- |
-| Dummy (Class Prior)      |  0.5000 | 0.1591 | Random baseline |
-| Logistic Regression      |  0.5334 | 0.1704 | |
-| Random Forest            |  0.5391 | 0.1742 | |
-| XGBoost (Standard)       |  0.5591 | 0.1886 | Best discrimination |
-| **Cost-Optimized XGBoost** | **0.5591** | **0.1886** | Same model, different threshold policy |
+| Dummy (Class Prior)      |  0.5000 | 0.1093 | Random baseline (PR-AUC = class prevalence) |
+| Logistic Regression      |  0.5437 | 0.1440 | |
+| Random Forest            |  0.5434 | 0.1578 | |
+| XGBoost (Standard)       |  0.5666 | 0.1826 | Best discrimination |
+| **Cost-Optimized XGBoost** | **0.5666** | **0.1826** | Same model, different threshold policy |
 
 ### Operating Curve — Threshold is a Policy Choice
 
-A key feature of this system is that **precision and recall are not fixed numbers**. The merchant selects an operating point based on their operational capacity.
+A key feature of this system is that **precision and recall are not fixed numbers**. The merchant selects an operating point based on their operational capacity. All values below are from the held-out **test set**.
 
 | Threshold | Precision | Recall | Review Rate | Expected Financial Loss |
 | :-------: | --------: | -----: | ----------: | ----------------------: |
-| 0.50 (standard) | 16.5% | **54.5%** | 42.53% | ₹39.60 Lakhs |
-| 0.60 | 22.3% | **21.1%** | 12.20% | ₹29.80 Lakhs |
-| 0.65 | 26.6% | **12.2%** | 5.91% | ₹28.53 Lakhs |
-| **0.78 (cost-optimal)** | **47.2%** | **5.3%** | **1.31%** | **₹25.37 Lakhs** |
+| 0.50 (standard) | 13.0% | **51.0%** | 42.84% | ₹39.76 Lakhs |
+| 0.60 | 17.7% | **21.5%** | 13.24% | ₹27.33 Lakhs |
+| 0.65 | 21.2% | **12.7%** | 6.54% | ₹25.19 Lakhs |
+| 0.70 | 31.2% | **8.2%** | 2.88% | ₹23.92 Lakhs |
+| **0.79 (cost-optimal)** | **49.4%** | **5.5%** | **1.21%** | **₹23.57 Lakhs** |
 
-**To a reviewer who asks "Why only 5.26% recall?":**
+**To a reviewer who asks "Why only 5.5% recall?":**
 
-The model detects **54.5% of risky orders** at the standard threshold. We chose τ = 0.78 because it minimizes the merchant's expected financial loss given the 1:3 FP/FN cost structure. A merchant willing to review more orders can lower the threshold in real time using the **Threshold Optimizer slider** in the UI. That is precisely what the system is built for.
+The model detects **51% of risky orders** at the standard τ = 0.50 threshold. The cost-optimal τ = 0.79 is chosen because at the 1:3 FP/FN cost ratio, a model with modest discrimination (ROC-AUC 0.57) minimizes expected loss by flagging only its highest-confidence predictions. A merchant willing to review more orders can lower the threshold in real time using the **Threshold Optimizer slider** in the UI — the system is built to support that choice explicitly.
 
 ---
 
@@ -160,14 +163,14 @@ The model's threshold is selected using the financial cost of mistakes rather th
 
 | Policy                              | Expected Cost | Savings vs. Flag Nothing |
 | :---------------------------------- | ------------: | -----------------------: |
-| Flag Nothing (τ = 1.0)              |  ₹26.235 Lakhs |                        — |
-| Flag Everything (τ = 0.0)           |  ₹65.840 Lakhs |              -₹39.6 Lakhs |
-| XGBoost at τ = 0.50 (high recall)   |  ₹39.600 Lakhs |              -₹13.4 Lakhs |
-| XGBoost at τ = 0.60                 |  ₹29.800 Lakhs |               -₹3.6 Lakhs |
-| XGBoost at τ = 0.65                 |  ₹28.530 Lakhs |               -₹2.3 Lakhs |
-| **Cost-Optimized XGBoost (τ = 0.78)** | **₹25.370 Lakhs** | **₹0.865 Lakhs saved** |
+| Flag Nothing (τ = 1.0)              |  ₹24.45 Lakhs |                        — |
+| Flag Everything (τ = 0.0)           |  ₹66.44 Lakhs |              -₹42.0 Lakhs |
+| XGBoost at τ = 0.50 (high recall)   |  ₹39.76 Lakhs |              -₹15.3 Lakhs |
+| XGBoost at τ = 0.60                 |  ₹27.33 Lakhs |               -₹2.88 Lakhs |
+| XGBoost at τ = 0.65                 |  ₹25.19 Lakhs |               -₹0.74 Lakhs |
+| **Cost-Optimized XGBoost (τ = 0.79)** | **₹23.57 Lakhs** | **₹0.88 Lakhs saved** |
 
-This directly illustrates why blindly choosing high-recall (τ = 0.50) is financially suboptimal: despite catching 54.5% of risky orders, the volume of false positives (42.5% review rate) makes it **more expensive** than the flag-nothing baseline. The cost-optimal threshold is the one that genuinely reduces expected merchant loss.
+This directly illustrates why blindly choosing high-recall (τ = 0.50) is financially suboptimal: despite catching 51% of risky orders, the volume of false positives (42.8% review rate) makes it **more expensive** than the flag-nothing baseline. The cost-optimal threshold is the one that genuinely reduces expected merchant loss.
 
 ### Merchant Operational Constraint
 
@@ -175,14 +178,14 @@ Beyond pure cost minimization, the system supports a merchant budget constraint:
 
 > **"Only review ≤ 5% of orders manually."**
 
-At this budget, the threshold optimizes to **τ = 0.78**, achieving a **1.31% actual review rate** — well within the operational limit.
+At this budget, the threshold optimizes to **τ = 0.79**, achieving a **1.21% actual review rate** — well within the operational limit.
 
 ### Result
 
-**Cost-optimized policy saves ₹86,500 vs. the Flag Nothing policy.**
-**It saves ₹40.47 Lakhs vs. flagging everything.**
+**Cost-optimized policy saves ₹88,000 vs. the Flag Nothing policy.**
+**It saves ₹42.87 Lakhs vs. flagging everything.**
 
-The cost-optimal threshold τ = 0.78 is selected on the **validation set** (not the test set) to prevent test-set leakage, then applied to the untouched test set for final reporting.
+The cost-optimal threshold τ = 0.79 is selected on the **validation set** (not the test set) to prevent test-set leakage, then applied to the untouched test set for final reporting.
 
 ---
 
@@ -195,7 +198,7 @@ False Positive = ₹500 (unnecessary review of a safe order)
 False Negative = ₹1,500 (missed risky order slips through)
 ```
 
-Missing a genuinely risky return is **3× more expensive** than a false positive. But with 84% of orders being safe, the volume of false positives at low thresholds overwhelms the FN savings.
+Missing a genuinely risky return is **3× more expensive** than a false positive. But with ~85% of orders being safe, the volume of false positives at low thresholds overwhelms the FN savings.
 
 The cost-optimal threshold explicitly solves this tradeoff.
 
@@ -238,7 +241,7 @@ Payment type (boleto)+0.14
 Order value          +0.09
 
 Decision threshold
-0.78  ← cost-optimal threshold (selected on validation set)
+0.79  ← cost-optimal threshold (selected on validation set)
 ```
 
 > **Note on features:** All factors above are available at order placement time. Post-fulfillment signals (actual delivery delay, review score for the current order) are **excluded** from the model to prevent target leakage.
@@ -366,16 +369,16 @@ Evaluation
 
 # 9. Baseline Comparison
 
-All models are trained on the same `train_features.csv` split and evaluated on the same untouched `test_features.csv`. Financial cost uses ₹500 FP / ₹1,500 FN at each model's default threshold (τ = 0.50), except for the cost-optimized XGBoost which uses τ = 0.78 (selected on validation set).
+All models are trained on the same `train_features.csv` split and evaluated on the same untouched `test_features.csv`. Financial cost uses ₹500 FP / ₹1,500 FN at each model's default threshold (τ = 0.50), except for the cost-optimized XGBoost which uses τ = 0.79 (selected on validation set).
 
 | Model / Policy               | Precision | Recall | ROC-AUC | PR-AUC | Financial Cost |
 | :--------------------------- | --------: | -----: | ------: | -----: | -------------: |
-| Flag Nothing (τ = 1.0)       |        — |     — |      — |     — |    ₹26.235L |
-| Flag Everything (τ = 0.0)    |        — |     — |      — |     — |    ₹65.840L |
-| Logistic Regression (τ=0.50) |    20.5% | 54.7% |  0.5334 | 0.1704 |             — |
-| Random Forest (τ=0.50)       |    12.4% | 33.7% |  0.5391 | 0.1742 |             — |
-| XGBoost (τ=0.50)             |    16.5% | 54.5% |  0.5591 | 0.1886 |    ₹39.600L |
-| **Cost-Optimized XGBoost (τ=0.78)** | **47.2%** | **5.3%** | **0.5591** | **0.1886** | **₹25.370L** |
+| Flag Nothing (τ = 1.0)       |        — |     — |      — |     — |    ₹24.45L |
+| Flag Everything (τ = 0.0)    |        — |     — |      — |     — |    ₹66.44L |
+| Logistic Regression (τ=0.50) |    12.2% | 50.7% |  0.5437 | 0.1440 |    ₹41.76L |
+| Random Forest (τ=0.50)       |    19.6% |  9.4% |  0.5434 | 0.1578 |    ₹25.30L |
+| XGBoost (τ=0.50)             |    13.0% | 51.0% |  0.5666 | 0.1826 |    ₹39.76L |
+| **Cost-Optimized XGBoost (τ=0.79)** | **49.4%** | **5.5%** | **0.5666** | **0.1826** | **₹23.57L** |
 
 The key comparison is not only:
 

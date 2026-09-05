@@ -5,6 +5,7 @@
     "installments",
     "discount_flag",
     "customer_order_count",
+    "prior_low_review_count",
     "address_state_mismatch",
     "payment_type_credit_card",
     "payment_type_boleto",

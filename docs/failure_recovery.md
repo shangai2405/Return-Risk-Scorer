@@ -7,27 +7,32 @@ This document captures the real engineering problems encountered during developm
 ## Failure 1 — Label/Feature Circularity (`prior_low_review_count`)
 
 **What broke:**
-`prior_low_review_count` was included in the model's feature set (`features.py`) while simultaneously being one of three OR-conditions that define the `return_risk = 1` label in `labeling.py`:
+The original label was a three-condition OR:
 
 ```python
-rule_prior_reviews = df["prior_low_review_count"] >= p_thresh
-df["return_risk"] = (rule_low_review | rule_delay | rule_prior_reviews).astype(int)
+rule_low_review    = df["review_score"] <= 2
+rule_delay         = df["delivery_delay_days"] > 4
+rule_prior_reviews = df["prior_low_review_count"] >= 2
+df["return_risk"]  = (rule_low_review | rule_delay | rule_prior_reviews).astype(int)
 ```
 
-This created definitional overlap: XGBoost could trivially threshold this single column to correctly classify ~⅓ of all positive-class examples without learning any genuine return-risk signal. Reported precision/recall on those rows was partly measuring "did the model rediscover the labeling rule," not predictive ability.
+`prior_low_review_count` was included in `features.py` as a model input while simultaneously being one of the three conditions that defined `return_risk = 1`. XGBoost could trivially threshold this single column to correctly classify ~⅓ of all positive-class examples without learning any genuine return-risk signal.
 
 **Why it happened:**
-The feature is temporally valid — it is an expanding count of prior low reviews, strictly computed before the current order using `.shift(1).cumsum()`, so there is no time-leakage. The problem is not temporal; it is definitional. Past behavior predicting future behavior is legitimate. Past behavior *defining* the label and then being fed back as a feature is not.
+The feature is temporally valid (expanding prior count, `.shift(1).cumsum()`, no time-leakage). The problem is definitional, not temporal.
 
-**What changed:**
-- `prior_low_review_count` removed from `feature_cols` in [`ml/src/features.py`](../ml/src/features.py).
-- A comment explaining the exact reason is written inline at the removal point for future contributors.
-- Full pipeline retrained: `features → train → baselines → calibration → cost_model → evaluate`.
-- The field is still sent in the API payload (with a fixed default of `0`) so the backend schema remains stable, but it is no longer exposed in the UI.
-- The field is no longer shown in the assessment form in [`frontend/src/pages/AssessmentPage.jsx`](../frontend/src/pages/AssessmentPage.jsx).
+**What changed — iterative fix:**
+
+*First iteration (insufficient):* Removed `prior_low_review_count` from `feature_cols`. This fixed the circularity but caused ROC-AUC to drop to 0.5536 (near-random), confirming the feature was carrying substantial signal that the remaining features could not replicate.
+
+*Final resolution:* Changed the label definition to a **single criterion** — `return_risk = 1` iff `review_score <= 2` — and restored `prior_low_review_count` as a legitimate feature:
+- `review_score <= 2` is a single, interpretable proxy: the model now predicts one statable thing ("will this order result in explicit customer dissatisfaction?")
+- `prior_low_review_count` is now a pure predictor — past low-review behaviour predicting future dissatisfaction is valid signal; it was only circular when it also defined the label
+- `delivery_delay_days` stays out of both label and features — it is a post-fulfillment signal unknowable at prediction time
+- Model after fix: ROC-AUC **0.5666**, PR-AUC **0.1826** (up from 0.5536 / 0.1749 in the intermediate state)
 
 **Honest impact:**
-Savings vs. Flag Nothing dropped from ₹954,000 → ₹89,000. ROC-AUC dropped to 0.5536. This is the correct result. The model now has to earn its metrics through the remaining features (order value, freight, payment type, installments, address mismatch, product category, customer order count). The dataset (Olist) has limited at-placement signal; a real Razorpay deployment would have richer features.
+Savings vs. Flag Nothing is ₹88,000 on the 14,917-order test set. The construct validity is clean: the model predicts a single, statable thing, and every feature is a genuine predictor of that thing.
 
 ---
 

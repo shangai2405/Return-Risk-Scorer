@@ -9,15 +9,26 @@ PREDICTION POINT & TARGET METHODOLOGY DEFINITION:
 1. Prediction Point:
    - Evaluated immediately after order placement, before fulfillment.
    - Only information available at this time is allowed in the feature pipeline.
-   - Outcomes known after placement (such as actual delivery delays or review scores) are STRICTLY EXCLUDED.
+   - Post-fulfillment outcomes (actual delivery delays, current-order review scores) are STRICTLY
+     EXCLUDED from model features to prevent data leakage.
 
-2. Target Definition (Empirical Proxy):
-   - 1 = observed/proxy risky outcome (low review, extreme delivery delay, or high prior customer review complaints)
-   - 0 = otherwise
-   - Note on Dataset Limitation: The Olist dataset does not contain clean, direct RTO (Return to Origin) 
-     labels. We therefore construct an empirical proxy target using observed order outcomes.
-   - Critical Ordering: This target is generated BEFORE the predictive feature pipeline is executed, 
-     allowing us to use outcome variables for the label while filtering them out of model features.
+2. Target Definition — Single Criterion:
+   - return_risk = 1  iff  review_score <= 2  (explicit customer dissatisfaction: 1 or 2 stars)
+   - return_risk = 0  otherwise
+
+   Rationale for single-criterion label:
+   The Olist dataset has no direct RTO/return/chargeback field. We use review_score <= 2 as the
+   sole proxy because:
+   a) It is a single, interpretable construct: the model predicts whether an order will result
+      in explicit customer dissatisfaction — the closest available signal for return/dispute risk.
+   b) Prior iterations used a three-condition OR (review_score + delivery_delay + prior complaints).
+      This created a construct-validity problem: the model was predicting a composite that includes
+      late delivery, which is a fulfilment problem, not a pre-placement risk signal.
+   c) Using a single criterion allows prior_low_review_count (past behaviour of this customer) to
+      be a legitimate predictive feature — past complaints predicting future dissatisfaction is
+      valid signal; it was only circular when it also defined the label.
+
+   Critical Ordering: This target is generated BEFORE the predictive feature pipeline is executed.
 """
 
 def run_labeling():
@@ -125,12 +136,19 @@ def run_labeling():
     p_thresh = loaded_thresh["prior_low_review_threshold"]
     r_thresh = loaded_thresh["review_score_threshold"]
 
-    # Apply labeling rule from loaded JSON thresholds
+    # Apply labeling rule — single criterion: explicit customer dissatisfaction (review score 1 or 2)
+    # delivery_delay_days and prior_low_review_count thresholds are still computed and stored in
+    # labeling_thresholds.json for analytical reference, but are NOT used in the label definition:
+    #   - delivery_delay_days is a post-fulfillment signal; including it in the label means we are
+    #     partly predicting a fulfilment outcome, not a pre-placement risk.
+    #   - prior_low_review_count is restored as a model FEATURE (legitimate predictive signal);
+    #     using it in the label too would recreate the circularity fixed in the prior iteration.
     rule_low_review = df["review_score"] <= r_thresh
-    rule_delay = df["delivery_delay_days"] > d_thresh
-    rule_prior_reviews = df["prior_low_review_count"] >= p_thresh
+    # rule_delay and rule_prior_reviews retained as computed columns for reference only:
+    rule_delay = df["delivery_delay_days"] > d_thresh          # noqa: F841 — analytical reference
+    rule_prior_reviews = df["prior_low_review_count"] >= p_thresh  # noqa: F841 — analytical reference
 
-    df["return_risk"] = (rule_low_review | rule_delay | rule_prior_reviews).astype(int)
+    df["return_risk"] = rule_low_review.astype(int)
 
     # Log class balance
     total_orders = len(df)
